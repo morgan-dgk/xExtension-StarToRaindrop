@@ -1,0 +1,62 @@
+<?php
+	$consumer_key = FreshRSS_Context::$user_conf->pocket_consumer_key;
+	$username = FreshRSS_Context::$user_conf->pocket_username;
+	$access_token = FreshRSS_Context::$user_conf->pocket_access_token;
+	$keyboard_shortcut = FreshRSS_Context::$user_conf->pocket_keyboard_shortcut;
+?>
+
+<form action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
+	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
+	<div class="form-group">
+		<label class="group-name" for="keyboard_shortcut"><?php echo _t('ext.pocketButton.configure.keyboard_shortcut'); ?></label>
+		<div class="group-controls">
+			<input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?php echo $keyboard_shortcut; ?>">
+		</div>
+	</div>
+
+	<div class="form-group form-actions">
+		<div class="group-controls">
+			<button type="submit" class="btn btn-important"><?php echo _t('gen.action.submit'); ?></button>
+		</div>
+	</div>
+</form>
+
+<?php if ($this->isEnabled() && empty($username) && empty($access_token)): ?>
+<form action="<?php echo _url('pocketButton', 'requestAccess'); ?>" method="post">
+	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
+	<div class="form-group">
+		<label class="group-name" for="consumer_key"><?php echo _t('ext.pocketButton.configure.consumer_key'); ?></label>
+		<div class="group-controls">
+			<input type="text" name="consumer_key" id="consumer_key" value="<?php echo $consumer_key; ?>">
+		</div>
+	</div>
+
+	<div class="alert alert-warn">
+		<?php echo _t('ext.pocketButton.configure.consumer_key_description'); ?>
+	</div>
+	
+	<div class="form-group form-actions">
+		<div class="group-controls">
+			<button type="submit" class="btn btn-important"><?php echo _t('ext.pocketButton.configure.connect_to_pocket'); ?></button>
+		</div>
+	</div>
+</form>
+<?php elseif (!$this->isEnabled()): ?>
+	<p class="alert alert-error">
+		<?php echo _t('ext.pocketButton.configure.extension_disabled'); ?>
+	</p>
+<?php endif ?>
+
+<?php if (!empty($username) || !empty($access_token)): ?>
+	<p class="alert alert-success">
+		<?php echo _t('ext.pocketButton.configure.connected_to_pocket', $username, $access_token); ?>
+	</p>
+	<form action="<?php echo _url('pocketButton', 'revokeAccess'); ?>" method="post">
+		<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
+		<div class="form-group form-actions">
+			<div class="group-controls">
+				<button type="submit" class="btn btn-important"><?php echo _t('ext.pocketButton.configure.revoke_access'); ?></button>
+			</div>
+		</div>
+	</form>
+<?php endif ?>

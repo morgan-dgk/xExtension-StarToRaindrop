@@ -1,0 +1,8 @@
+{
+	"name": "Star to Pocket",
+	"author": "Pat Hough",
+	"description": "An extension that sends the article to pocket when you star it in FreshRss",
+	"version": 0.1,
+	"entrypoint": "PocketButton",
+	"type": "user"
+}
