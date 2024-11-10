@@ -16,14 +16,14 @@ With this extension you can simply star an article to share it with Pocket. Ever
 
 ## Download and setup
 
-1. Download the [latest release](https://github.com/huffstler/star-to-pocket/releases)
-1. Extract and upload it to the `./extensions` folder of your FreshRSS installation
+1. Clone the repository to your FreshRSS installations extensions folder
+    1. You can also download the [latest release](https://github.com/huffstler/star-to-pocket/tags)
+    1. Then, extract and upload it to the `./extensions` folder of your FreshRSS installation
 1. Go to [Pocket's Developer Portal](https://getpocket.com/developer/apps/)
 1. Create a new application with at least the `add` permission
 1. Enter your Consumer Key in the `Star To Pocket` extension settings
 1. Press "Connect to Pocket"
 1. Authorize your just created application
-1. *Optional Set a custom keyboard shortcut*
 
 ## Pocket API Error codes
 

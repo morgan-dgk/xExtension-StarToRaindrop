@@ -9,7 +9,7 @@ return array(
 				<li>Erstelle eine Applikation welche mindestens die \'Add\' Berechtigung beseitzt</li>
 				<li>Gebe deinen Verbraucher-Schlüssel (Consumer Key) ein und drücke auf "Mit Pocket verbinden"</li>
 			</ul>
-			<span>Weitere Details findest auf <a href="https://github.com/christian-putzke/freshrss-pocket-button" target="_blank">GitHub</a>!',
+			<span>Weitere Details findest auf <a href="https://github.com/huffstler/FreshRSS-StarToPocket" target="_blank">GitHub</a>!',
 			'connect_to_pocket' => 'Mit Pocket verbinden',
 			'username' => 'Benutzername',
 			'access_token' => 'Zugangs-Token',
