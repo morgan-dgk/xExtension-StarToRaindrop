@@ -1,18 +1,18 @@
 <?php
 
-class FreshExtension_pocketButton_Controller extends Minz_ActionController
+class FreshExtension_starToPocket_Controller extends Minz_ActionController
 {
 	public function jsVarsAction()
 	{
-		$extension = Minz_ExtensionManager::findExtension('Pocket Button');
+		$extension = Minz_ExtensionManager::findExtension('Star to Pocket');
 
-		$this->view->pocket_button_vars = json_encode(array(
+		$this->view->stp_vars = json_encode(array(
 			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
 			'i18n' => array(
-				'added_article_to_pocket' => _t('ext.pocketButton.notifications.added_article_to_pocket', '%s'),
-				'failed_to_add_article_to_pocket' => _t('ext.pocketButton.notifications.failed_to_add_article_to_pocket', '%s'),
-				'ajax_request_failed' => _t('ext.pocketButton.notifications.ajax_request_failed'),
-				'article_not_found' => _t('ext.pocketButton.notifications.article_not_found'),
+				'added_article_to_pocket' => _t('ext.starToPocket.notifications.added_article_to_pocket', '%s'),
+				'failed_to_add_article_to_pocket' => _t('ext.starToPocket.notifications.failed_to_add_article_to_pocket', '%s'),
+				'ajax_request_failed' => _t('ext.starToPocket.notifications.ajax_request_failed'),
+				'article_not_found' => _t('ext.starToPocket.notifications.article_not_found'),
 			)
 		));
 
@@ -29,19 +29,19 @@ class FreshExtension_pocketButton_Controller extends Minz_ActionController
 		);
 
 		$result = $this->curlPostRequest('https://getpocket.com/v3/oauth/authorize', $post_data);
-		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Pocket Button'));
+		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Star to Pocket'));
 
 		if ($result['status'] == 200) {
 			FreshRSS_Context::$user_conf->pocket_username = $result['response']->username;
 			FreshRSS_Context::$user_conf->pocket_access_token = $result['response']->access_token;
 			FreshRSS_Context::$user_conf->save();
 
-			Minz_Request::good(_t('ext.pocketButton.notifications.authorized_success'), $url_redirect);
+			Minz_Request::good(_t('ext.starToPocket.notifications.authorized_success'), $url_redirect);
 		} else {
 			if ($result['errorCode'] == 158) {
-				Minz_Request::bad(_t('ext.pocketButton.notifications.authorized_aborted'), $url_redirect);
+				Minz_Request::bad(_t('ext.starToPocket.notifications.authorized_aborted'), $url_redirect);
 			} else {
-				Minz_Request::bad(_t('ext.pocketButton.notifications.authorized_failed', $result['errorCode']), $url_redirect);
+				Minz_Request::bad(_t('ext.starToPocket.notifications.authorized_failed', $result['errorCode']), $url_redirect);
 			}
 		}
 	}
@@ -63,15 +63,15 @@ class FreshExtension_pocketButton_Controller extends Minz_ActionController
 			FreshRSS_Context::$user_conf->pocket_request_token = $result['response']->code;
 			FreshRSS_Context::$user_conf->save();
 
-			$redirect_url = Minz_Url::display(array('c' => 'pocketButton', 'a' => 'authorize'), 'html', true);
+			$redirect_url = Minz_Url::display(array('c' => 'starToPocket', 'a' => 'authorize'), 'html', true);
 			$redirect_url = str_replace('&', urlencode('&'), $redirect_url);
 			$pocket_redirect_url = 'https://getpocket.com/auth/authorize?request_token=' . $result['response']->code . '&redirect_uri=' . $redirect_url;
 
 			header('Location: ' . $pocket_redirect_url);
 			exit();
 		} else {
-			$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Pocket Button'));
-			Minz_Request::bad(_t('ext.pocketButton.notifications.request_access_failed', $result['errorCode']), $url_redirect);
+			$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Star to Pocket'));
+			Minz_Request::bad(_t('ext.starToPocket.notifications.request_access_failed', $result['errorCode']), $url_redirect);
 		}
 	}
 
@@ -83,7 +83,7 @@ class FreshExtension_pocketButton_Controller extends Minz_ActionController
 		FreshRSS_Context::$user_conf->pocket_username = '';
 		FreshRSS_Context::$user_conf->save();
 
-		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Pocket Button'));
+		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'Star to Pocket'));
 		Minz_Request::forward($url_redirect);
 	}
 

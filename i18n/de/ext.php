@@ -1,7 +1,7 @@
 <?php
 
 return array(
-	'pocketButton' => array(
+	'starToPocket' => array(
 		'configure' => array(
 			'consumer_key' => 'Verbraucher-Schlüssel',
 			'consumer_key_description' => '<ul class="listedNumbers">

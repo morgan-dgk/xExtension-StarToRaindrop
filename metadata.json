@@ -1,8 +1,8 @@
 {
 	"name": "Star to Pocket",
 	"author": "Pat Hough",
-	"description": "An extension that sends the article to pocket when you star it in FreshRSS",
+	"description": "An extension that sends an article to Pocket when you Star (Favorite) it.",
 	"version": 0.1,
-	"entrypoint": "PocketButton",
+	"entrypoint": "starToPocket",
 	"type": "user"
 }

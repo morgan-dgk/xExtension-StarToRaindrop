@@ -1,13 +1,12 @@
 <?php
 
-class PocketButtonExtension extends Minz_Extension {
+class StarToPocketExtension extends Minz_Extension {
 	public function init() {
 		$this->registerTranslates();
 
 		// New, watching for star activity
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-
-		$this->registerController('pocketButton');
+		$this->registerController('starToPocket');
 		$this->registerViews();
 	}
 
@@ -23,15 +22,14 @@ class PocketButtonExtension extends Minz_Extension {
 
 	/**
 	 * if isStarred, send each starredEntry to 
-	 * whatever function is called for saving to pocket
+	 * addAction in the controller.
 	 */
 	public function handleStar(array $starredEntries, bool $isStarred): void {
 		$this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
-
 				$url_array = [
-					'c' => 'pocketButton',
+					'c' => 'starToPocket',
 					'a' => 'add',
 					'params' => [
 						'id' => $entry,

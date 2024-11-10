@@ -1,0 +1,1 @@
+var stp_vars = <?= htmlspecialchars_decode(urldecode($this->stp_vars)) ?>
