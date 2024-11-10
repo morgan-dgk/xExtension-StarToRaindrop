@@ -1,4 +1,4 @@
-# FreshRSS Star to Pocket
+# FreshRSS Star To Pocket
 ====================
 
 A [FreshRSS](https://freshrss.org/) extension that automatically sends the article to pocket whenever you star it in FreshRSS.
@@ -20,7 +20,7 @@ With this extension you can simply star an article to share it with Pocket. Ever
 1. Extract and upload it to the `./extensions` folder of your FreshRSS installation
 1. Go to [Pocket's Developer Portal](https://getpocket.com/developer/apps/)
 1. Create a new application with at least the `add` permission
-1. Enter your Consumer Key in the `Star to Pocket` extension settings
+1. Enter your Consumer Key in the `Star To Pocket` extension settings
 1. Press "Connect to Pocket"
 1. Authorize your just created application
 1. *Optional Set a custom keyboard shortcut*
