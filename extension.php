@@ -27,27 +27,18 @@ class PocketButtonExtension extends Minz_Extension {
 	 */
 	public function handleStar(array $starredEntries, bool $isStarred): void {
 		$this->registerTranslates();
+		foreach ($starredEntries as $entry) {
+			if ($isStarred){
 
-		/**
-		 * For loop for each entry in starredEntries
-		 * 		Build the url_array for each entry
-		 * 		Call MR::forward with the url_array for each entry
-		 * 		Controller addAction() should take care of the rest
-		 */
-
-		foreach ($starredEntries as $entry)
-		{
-			$url_array = [
-				'c' => 'pocketButton',
-				'a' => 'add',
-				'params' => [
-					'id' => $entry,
-				]
-			];
-	
-			Minz_Request::forward($url_array);
-
+				$url_array = [
+					'c' => 'pocketButton',
+					'a' => 'add',
+					'params' => [
+						'id' => $entry,
+					]
+				];
+				Minz_Request::forward($url_array);
+			}
 		}
-
 	}
 }
