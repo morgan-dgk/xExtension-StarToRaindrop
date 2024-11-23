@@ -27,8 +27,6 @@ class StarToPocketExtension extends Minz_Extension {
 	 */
 	public function handleStar(array $starredEntries, bool $isStarred): void {
 		$this->registerTranslates();
-		$base = FreshRSS_Context::systemConf()->base_url;
-		Minz_Log::error('pat handleStar called');
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
 				$this->addAction($entry);
