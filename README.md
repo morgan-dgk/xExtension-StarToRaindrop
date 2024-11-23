@@ -37,10 +37,6 @@ If you'd like to translate the extension to another language please file a pull 
 
 Super thanks to [@christian-putzke](https://github.com/christian-putzke) for writing 99% of the code necessary for this extension before I ever had the idea.
 
-## `// TODO:`
+## `//TODO:`
 
 Once this is working I don't expect to do much with it. It _would_ be nice to have tags passed to Pocket, or integration with other tools (Wallabag, etc), but it's not necessary for me. At minimum I expect to merge upstream changes from `@christian-putzke` _if_ they touch functionality that this extension uses. But that probably won't be a fast process. Just so you know if you're reading this.
-
-### Known Issues
-
-- Favoriting an article in FreshRSS UI will remove the star icon and replace it with `undefined` text. Refreshing the page fixes that.
