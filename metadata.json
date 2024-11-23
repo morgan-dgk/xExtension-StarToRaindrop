@@ -3,6 +3,6 @@
 	"author": "Pat Hough",
 	"description": "An extension that sends an article to Pocket when you Star (Favorite) it.",
 	"version": 0.1,
-	"entrypoint": "starToPocket",
+	"entrypoint": "StarToPocket",
 	"type": "user"
 }
