@@ -87,33 +87,6 @@ class FreshExtension_starToPocket_Controller extends Minz_ActionController
 		Minz_Request::forward($url_redirect);
 	}
 
-	public function addAction()
-	{
-		$this->view->_layout(false);
-
-		$entry_id = Minz_Request::param('id');
-		$entry_dao = FreshRSS_Factory::createEntryDao();
-		$entry = $entry_dao->searchById($entry_id);
-
-		if ($entry === null) {
-			echo json_encode(array('status' => 404));
-			return;
-		}
-
-		$post_data = array(
-			'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-			'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
-			'url' => $entry->link(),
-			'title' => $entry->title(),
-			'time' => time()
-		);
-
-		$result = $this->curlPostRequest('https://getpocket.com/v3/add', $post_data);
-		$result['response'] = array('title' => $entry->title());
-
-		echo json_encode($result);
-	}
-
 	private function curlPostRequest($url, $post_data)
 	{
 		$headers = array(
