@@ -1,43 +1,7 @@
 <?php
 
-class StarToPocketExtension extends Minz_Extension {
-
-	public function init() {
-		$this->registerTranslates();
-
-		// New, watching for star activity
-		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-		// $this->registerController('StarToPocket');
-		$this->registerViews();
-	}
-
-	public function handleConfigureAction() {
-		$this->registerTranslates();
-		
-		if (Minz_Request::isPost()) {
-			$keyboard_shortcut = Minz_Request::param('keyboard_shortcut', '');
-			FreshRSS_Context::$user_conf->pocket_keyboard_shortcut = $keyboard_shortcut;
-			FreshRSS_Context::$user_conf->save();
-		}
-	}
-
-	/**
-	 * if isStarred, send each starredEntry to 
-	 * addAction in the controller.
-	 */
-	public function handleStar(array $starredEntries, bool $isStarred): void {
-		$this->registerTranslates();
-		$base = FreshRSS_Context::systemConf()->base_url;
-		Minz_Log::error('pat handleStar called');
-		foreach ($starredEntries as $entry) {
-			if ($isStarred){
-				$this->addAction($entry);
-			}
-		}
-	}
-
-<<<<<<< HEAD
-
+class FreshExtension_starToPocket_Controller extends Minz_ActionController
+{
 	public function jsVarsAction()
 	{
 		$extension = Minz_ExtensionManager::findExtension('StarToPocket');
@@ -45,10 +9,10 @@ class StarToPocketExtension extends Minz_Extension {
 		$this->view->stp_vars = json_encode(array(
 			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
 			'i18n' => array(
-				'added_article_to_pocket' => _t('ext.StarToPocket.notifications.added_article_to_pocket', '%s'),
-				'failed_to_add_article_to_pocket' => _t('ext.StarToPocket.notifications.failed_to_add_article_to_pocket', '%s'),
-				'ajax_request_failed' => _t('ext.StarToPocket.notifications.ajax_request_failed'),
-				'article_not_found' => _t('ext.StarToPocket.notifications.article_not_found'),
+				'added_article_to_pocket' => _t('ext.starToPocket.notifications.added_article_to_pocket', '%s'),
+				'failed_to_add_article_to_pocket' => _t('ext.starToPocket.notifications.failed_to_add_article_to_pocket', '%s'),
+				'ajax_request_failed' => _t('ext.starToPocket.notifications.ajax_request_failed'),
+				'article_not_found' => _t('ext.starToPocket.notifications.article_not_found'),
 			)
 		));
 
@@ -72,12 +36,12 @@ class StarToPocketExtension extends Minz_Extension {
 			FreshRSS_Context::$user_conf->pocket_access_token = $result['response']->access_token;
 			FreshRSS_Context::$user_conf->save();
 
-			Minz_Request::good(_t('ext.StarToPocket.notifications.authorized_success'), $url_redirect);
+			Minz_Request::good(_t('ext.starToPocket.notifications.authorized_success'), $url_redirect);
 		} else {
 			if ($result['errorCode'] == 158) {
-				Minz_Request::bad(_t('ext.StarToPocket.notifications.authorized_aborted'), $url_redirect);
+				Minz_Request::bad(_t('ext.starToPocket.notifications.authorized_aborted'), $url_redirect);
 			} else {
-				Minz_Request::bad(_t('ext.StarToPocket.notifications.authorized_failed', $result['errorCode']), $url_redirect);
+				Minz_Request::bad(_t('ext.starToPocket.notifications.authorized_failed', $result['errorCode']), $url_redirect);
 			}
 		}
 	}
@@ -99,7 +63,7 @@ class StarToPocketExtension extends Minz_Extension {
 			FreshRSS_Context::$user_conf->pocket_request_token = $result['response']->code;
 			FreshRSS_Context::$user_conf->save();
 
-			$redirect_url = Minz_Url::display(array('c' => 'StarToPocket', 'a' => 'authorize'), 'html', true);
+			$redirect_url = Minz_Url::display(array('c' => 'starToPocket', 'a' => 'authorize'), 'html', true);
 			$redirect_url = str_replace('&', urlencode('&'), $redirect_url);
 			$pocket_redirect_url = 'https://getpocket.com/auth/authorize?request_token=' . $result['response']->code . '&redirect_uri=' . $redirect_url;
 
@@ -107,7 +71,7 @@ class StarToPocketExtension extends Minz_Extension {
 			exit();
 		} else {
 			$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
-			Minz_Request::bad(_t('ext.StarToPocket.notifications.request_access_failed', $result['errorCode']), $url_redirect);
+			Minz_Request::bad(_t('ext.starToPocket.notifications.request_access_failed', $result['errorCode']), $url_redirect);
 		}
 	}
 
@@ -121,33 +85,6 @@ class StarToPocketExtension extends Minz_Extension {
 
 		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
 		Minz_Request::forward($url_redirect);
-	}
-
-	public function addAction($id)
-	{
-		// $this->view->_layout(false);
-
-		$entry_dao = FreshRSS_Factory::createEntryDao();
-		$entry = $entry_dao->searchById($id);
-
-		if ($entry === null) {
-			echo json_encode(array('status' => 404));
-			return;
-		}
-
-		$post_data = array(
-			'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-			'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
-			'url' => $entry->link(),
-			'title' => $entry->title(),
-			'time' => time()
-		);
-
-		$result = $this->curlPostRequest('https://getpocket.com/v3/add', $post_data);
-		$result['response'] = array('title' => $entry->title());
-
-		// This was causing error messages to appear when starring
-		// echo json_encode($result);
 	}
 
 	private function curlPostRequest($url, $post_data)
