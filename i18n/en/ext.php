@@ -16,7 +16,7 @@ return array(
 			'access_token' => 'Access Token',
 			'keyboard_shortcut' => 'Keyboard shortcut',
 			'extension_disabled' => 'You need to enable the extension before you can connect to Raindrop!',
-			'connected_to_raindropIO' => 'You are connected to Raindrop!',
+			'connected_to_raindrop' => 'You are connected to Raindrop!',
 			'revoke_access' => 'Disconnect from Raindrop!'
 		),
 		'notifications' => array(

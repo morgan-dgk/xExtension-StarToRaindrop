@@ -47,8 +47,6 @@ class starToRaindropIOExtension extends Minz_Extension {
 		}
 
 		$post_data = array(
-		  'client_id' => FreshRSS_Context::$user_conf->client_id,
-      'pleaseParse' => "{}",
 			'link' => $entry->link(),
 			'title' => $entry->title(),
 			'created' => time()
@@ -61,9 +59,11 @@ class starToRaindropIOExtension extends Minz_Extension {
 		// echo json_encode($result);
 	}
 
-  private function postArticleToRaindrop($post_data, $access_token)
+  private function postArticleToRaindrop($post_data)
+  {
 
-	{
+    $access_token = FreshRSS_Context::$user_conf->access_token;
+
 		$headers = array(
 			'Content-Type: application/json; charset=UTF-8',
       'X-Accept: application/json',

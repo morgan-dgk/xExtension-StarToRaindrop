@@ -42,8 +42,6 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 		$result = $this->curlPostRequest($url, $post_data);
     $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToRaindropIO'));
 
-    var_dump($result);
-
 		if ($result['status'] == 200) {
 			FreshRSS_Context::$user_conf->access_token = $result['response']->access_token;
 			FreshRSS_Context::$user_conf->refresh_token = $result['response']->refresh_token;
