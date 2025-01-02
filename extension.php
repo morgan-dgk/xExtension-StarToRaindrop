@@ -47,14 +47,15 @@ class StarToPocketExtension extends Minz_Extension {
 		}
 
 		$post_data = array(
-			'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-			'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
-			'url' => $entry->link(),
+			// 'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
+   //    'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
+      'pleaseParse' => "{}",
+			'link' => $entry->link(),
 			'title' => $entry->title(),
-			'time' => time()
+			'created' => time()
 		);
 
-		$result = $this->curlPostRequest('https://getpocket.com/v3/add', $post_data);
+		$result = $this->curlPostRequest('https://api.raindrop.io/rest/v1/raindrop', $post_data);
 		$result['response'] = array('title' => $entry->title());
 
 		// This was causing error messages to appear when starring
