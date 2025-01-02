@@ -23,17 +23,20 @@ class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 
 	public function authorizeAction()
 	{
-		$post_data = array(
-			'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-			'code' => FreshRSS_Context::$user_conf->pocket_request_token
+    $post_data = array(
+      'grant_type' => 'authorization_code',
+      'code' => FreshRSS_Context::$user_conf->authorization_code,
+      'client_id' => FreshRSS_Context::$user_conf->client_id,
+      'client_secret' => FreshRSS_Context::$user_conf->client_secret,
+      'redirect_uri' => FreshRSS_Context::$user_conf->redirect_uri
 		);
 
-		$result = $this->curlPostRequest('https://raindrop.io/oauth/authorize', $post_data);
+		$result = $this->curlPostRequest('https://raindrop.io/oauth/access_token', $post_data);
 		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
 
 		if ($result['status'] == 200) {
-			FreshRSS_Context::$user_conf->pocket_username = $result['response']->username;
-			FreshRSS_Context::$user_conf->pocket_access_token = $result['response']->access_token;
+			FreshRSS_Context::$user_conf->access_token = $result['response']->access_token;
+			FreshRSS_Context::$user_conf->refresh_token = $result['response']->refresh_token;
 			FreshRSS_Context::$user_conf->save();
 
 			Minz_Request::good(_t('ext.starToPocket.notifications.authorized_success'), $url_redirect);
