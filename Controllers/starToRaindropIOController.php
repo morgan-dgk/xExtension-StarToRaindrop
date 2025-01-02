@@ -61,7 +61,12 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
     $client_id = Minz_Request::paramString('client_id');
     $redirect_uri = Minz_Request::paramString('redirect_uri');
 
-    $this->getRaindropAuthorization($client_id, $redirect_uri);
+    $target = $this->base_url . 'oauth/authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
+
+    
+    header('Location: ' . $target);
+    exit();
+
 
  //    if ($result['status'] == 200) {
 
