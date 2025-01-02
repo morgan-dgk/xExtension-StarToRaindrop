@@ -1,13 +1,13 @@
 <?php
 
-class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
+class FreshExtension_StarToRaindrop_Controller extends Minz_ActionController
 {
 
   private $base_url = 'https://api.raindrop.io/v1/oauth/';
 
 	public function jsVarsAction()
 	{
-		$extension = Minz_ExtensionManager::findExtension('StarToRaindropIO');
+		$extension = Minz_ExtensionManager::findExtension('StarToRaindrop');
 
 		$this->view->stp_vars = json_encode(array(
 			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
@@ -76,24 +76,6 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
     exit();
 
 
- //    if ($result['status'] == 200) {
-
- //      $code = $result['code']
-
-	// 		FreshRSS_Context::$user_conf->pocket_request_token = $result['response']->code;
-	// 		FreshRSS_Context::$user_conf->save();
-
-	// 		$redirect_url = Minz_Url::display(array('c' => 'starToRaindropIO', 'a' => 'authorize'), 'html', true);
-	// 		$redirect_url = str_replace('&', urlencode('&'), $redirect_url);
-	// 		$pocket_redirect_url = 'https://getpocket.com/auth/authorize?request_token=' . $result['response']->code . '&redirect_uri=' . $redirect_url;
-
-	// 		header('Location: ' . $pocket_redirect_url);
-	// 		exit();
-	// 	} else { $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
-	// 		Minz_Request::bad(_t('ext.starToRaindropIO.notifications.request_access_failed', $result['errorCode']), $url_redirect);
-	// 	}
-	}
-
 	public function revokeAccessAction()
   {
 	  FreshRSS_Context::$user_conf->access_token = '';
@@ -134,13 +116,8 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 
   private function getRaindropAuthorization($client_id, $redirect_uri)
   {
-  // $headers = array(
-  //   'Content-Type: application/json; charset=UTF-8',
-  //   'X-Accept: application/json'
-  // );
 
   $curl = curl_init($this->base_url . 'oauth/authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri);
-  // curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($curl, CURLOPT_HEADER, true);
 
