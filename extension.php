@@ -1,13 +1,13 @@
 <?php
 
-class starToRaindropIOExtension extends Minz_Extension {
+class StarToRaindropIOExtension extends Minz_Extension {
 
 	public function init() {
 		$this->registerTranslates();
 
 		// New, watching for star activity
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-		$this->registerController('starToRaindropIO');
+		$this->registerController('StarToRaindropIO');
 		$this->registerViews();
 	}
 
