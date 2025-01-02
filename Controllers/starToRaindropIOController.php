@@ -12,10 +12,10 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 		$this->view->stp_vars = json_encode(array(
 			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
 			'i18n' => array(
-				'added_article_to_pocket' => _t('ext.startToRaindropIO.notifications.added_article_to_pocket', '%s'),
-				'failed_to_add_article_to_pocket' => _t('ext.startToRaindropIO.notifications.failed_to_add_article_to_pocket', '%s'),
-				'ajax_request_failed' => _t('ext.startToRaindropIO.notifications.ajax_request_failed'),
-				'article_not_found' => _t('ext.startToRaindropIO.notifications.article_not_found'),
+				'added_article_to_pocket' => _t('ext.starToRaindropIO.notifications.added_article_to_pocket', '%s'),
+				'failed_to_add_article_to_pocket' => _t('ext.starToRaindropIO.notifications.failed_to_add_article_to_pocket', '%s'),
+				'ajax_request_failed' => _t('ext.starToRaindropIO.notifications.ajax_request_failed'),
+				'article_not_found' => _t('ext.starToRaindropIO.notifications.article_not_found'),
 			)
 		));
 
@@ -49,12 +49,12 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 			FreshRSS_Context::$user_conf->refresh_token = $result['response']->refresh_token;
 			FreshRSS_Context::$user_conf->save();
 
-			Minz_Request::good(_t('ext.startToRaindropIO.notifications.authorized_success'), $url_redirect);
+			Minz_Request::good(_t('ext.starToRaindropIO.notifications.authorized_success'), $url_redirect);
 		} else {
 			if ($result['errorCode'] == 158) {
-				Minz_Request::bad(_t('ext.startToRaindropIO.notifications.authorized_aborted'), $url_redirect);
+				Minz_Request::bad(_t('ext.starToRaindropIO.notifications.authorized_aborted'), $url_redirect);
 			} else {
-				Minz_Request::bad(_t('ext.startToRaindropIO.notifications.authorized_failed', $result['errorCode']), $url_redirect);
+				Minz_Request::bad(_t('ext.starToRaindropIO.notifications.authorized_failed', $result['errorCode']), $url_redirect);
 			}
 		}
 	}
