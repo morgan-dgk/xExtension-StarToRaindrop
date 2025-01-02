@@ -3,7 +3,7 @@
 class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 {
 
-  private $base_url = 'https://raindrop.io/oauth/';
+  private $base_url = 'https://api.raindrop.io/v1/oauth/';
 
 	public function jsVarsAction()
 	{
