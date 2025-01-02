@@ -1,7 +1,9 @@
 <?php
-	$access_token = FreshRSS_Context::$user_conf->pocket_access_token;
-	$client_id = FreshRSS_Context::$user_conf->client_id;
-	$keyboard_shortcut = FreshRSS_Context::$user_conf->pocket_keyboard_shortcut;
+  $access_token = FreshRSS_Context::$user_conf->raindrop_access_token;
+  $client_id = FreshRSS_Context::$user_conf->client_id;
+  $client_secret = FreshRSS_Contextr::$user_conf->client_secret;
+  $keyboard_shortcut = FreshRSS_Context::$user_conf->keyboard_shortcut;
+  $redirect_uri = FreshRSS_Context::$user_conf->redirect_uri
 ?>
 
 <form action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
@@ -21,17 +23,19 @@
 </form>
 
 <?php if ($this->isEnabled() && empty($access_token)): ?>
-<form action="<?php echo _url('starToRaindropIO', 'requestAccess'); ?>" method="get">
+<form action="<?php echo _url('starToRaindropIO', 'requestAccess'); ?>" method="post">
 	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 	<div class="form-group">
 		<label class="group-name" for="client_id"><?php echo _t('ext.starToRaindropIO.configure.client_id'); ?></label>
 		<div class="group-controls">
-			<input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>">
+      <input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>">
+      <input type="text" name="client_secret" id="client_secret" value="<?php echo $client_secret; ?>">
+      <input type="text" name="redirect_uri" id="redirect_uri" value="<?php echo $redirect_uri; ?>">
 		</div>
 	</div>
 
 	<div class="alert alert-warn">
-		<?php echo _t('ext.starToRaindropIO.configure.consumer_key_description'); ?>
+		<?php echo _t('ext.starToRaindropIO.configure.client_id_description'); ?>
 	</div>
 	
 	<div class="form-group form-actions">

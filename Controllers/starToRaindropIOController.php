@@ -2,6 +2,9 @@
 
 class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 {
+
+  private $base_url = 'https://api.raindrop.io/v1/';
+
 	public function jsVarsAction()
 	{
 		$extension = Minz_ExtensionManager::findExtension('StarToRaindropIO');
@@ -22,10 +25,13 @@ class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 	}
 
 	public function authorizeAction()
-	{
+  {
+
+    $code = Minz_Request::paramString('code') ?: '';
+
     $post_data = array(
       'grant_type' => 'authorization_code',
-      'code' => FreshRSS_Context::$user_conf->authorization_code,
+      'code' => $code,
       'client_id' => FreshRSS_Context::$user_conf->client_id,
       'client_secret' => FreshRSS_Context::$user_conf->client_secret,
       'redirect_uri' => FreshRSS_Context::$user_conf->redirect_uri
@@ -49,44 +55,39 @@ class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 		}
 	}
 
-	public function requestAccessAction()
-	{
-		$consumer_key = Minz_Request::param('consumer_key', '');
-		FreshRSS_Context::$user_conf->pocket_consumer_key = $consumer_key;
-		FreshRSS_Context::$user_conf->save();
+  public function requestAccessAction()
+  {
+    
+    $client_id = FreshRSS_Context::$user_conf->client_id;
+    $redirect_uri = FreshRSS_Context::$user_conf->redirect_uri;
 
-		$post_data = array(
-			'consumer_key' => $consumer_key,
-			'redirect_uri' => 'not_needed'
-		);
+    $this->getRaindropAuthorization($client_id, $redirect_uri);
 
-		$result = $this->curlPostRequest('https://getpocket.com/v3/oauth/request', $post_data);
+ //    if ($result['status'] == 200) {
 
-		if ($result['status'] == 200) {
-			FreshRSS_Context::$user_conf->pocket_request_token = $result['response']->code;
-			FreshRSS_Context::$user_conf->save();
+ //      $code = $result['code']
 
-			$redirect_url = Minz_Url::display(array('c' => 'starToPocket', 'a' => 'authorize'), 'html', true);
-			$redirect_url = str_replace('&', urlencode('&'), $redirect_url);
-			$pocket_redirect_url = 'https://getpocket.com/auth/authorize?request_token=' . $result['response']->code . '&redirect_uri=' . $redirect_url;
+	// 		FreshRSS_Context::$user_conf->pocket_request_token = $result['response']->code;
+	// 		FreshRSS_Context::$user_conf->save();
 
-			header('Location: ' . $pocket_redirect_url);
-			exit();
-		} else {
-			$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
-			Minz_Request::bad(_t('ext.starToPocket.notifications.request_access_failed', $result['errorCode']), $url_redirect);
-		}
+	// 		$redirect_url = Minz_Url::display(array('c' => 'starToRaindropIO', 'a' => 'authorize'), 'html', true);
+	// 		$redirect_url = str_replace('&', urlencode('&'), $redirect_url);
+	// 		$pocket_redirect_url = 'https://getpocket.com/auth/authorize?request_token=' . $result['response']->code . '&redirect_uri=' . $redirect_url;
+
+	// 		header('Location: ' . $pocket_redirect_url);
+	// 		exit();
+	// 	} else { $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
+	// 		Minz_Request::bad(_t('ext.starToRaindropIO.notifications.request_access_failed', $result['errorCode']), $url_redirect);
+	// 	}
 	}
 
 	public function revokeAccessAction()
-	{
-		FreshRSS_Context::$user_conf->pocket_request_token = '';
-		FreshRSS_Context::$user_conf->pocket_access_token = '';
-		FreshRSS_Context::$user_conf->pocket_consumer_key = '';
-		FreshRSS_Context::$user_conf->pocket_username = '';
+  {
+	  FreshRSS_Context::$user_conf->access_token = '';
+		FreshRSS_Context::$user_conf->refresh_token = ''; 
 		FreshRSS_Context::$user_conf->save();
 
-		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
+		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToRaindropIO'));
 		Minz_Request::forward($url_redirect);
 	}
 
@@ -117,7 +118,23 @@ class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 			'status' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
 			'errorCode' => isset($response_headers['x-error-code']) ? intval($response_headers['x-error-code']) : 0
 		);
-	}
+  }
+
+  private function getRaindropAuthorization($client_id, $redirect_uri)
+  {
+  // $headers = array(
+  //   'Content-Type: application/json; charset=UTF-8',
+  //   'X-Accept: application/json'
+  // );
+
+  $curl = curl_init($this->base_url . 'oauth/authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri);
+  // curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curl, CURLOPT_HEADER, true);
+
+  curl_exec($curl);
+  }
+
 
 	private function httpHeaderToArray($header)
 	{

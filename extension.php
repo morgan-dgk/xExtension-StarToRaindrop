@@ -1,6 +1,6 @@
 <?php
 
-class StarToPocketExtension extends Minz_Extension {
+class starToRaindropIOExtension extends Minz_Extension {
 
 	public function init() {
 		$this->registerTranslates();
@@ -47,30 +47,30 @@ class StarToPocketExtension extends Minz_Extension {
 		}
 
 		$post_data = array(
-			// 'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-   //    'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
+		  'client_id' => FreshRSS_Context::$user_conf->client_id,
       'pleaseParse' => "{}",
 			'link' => $entry->link(),
 			'title' => $entry->title(),
 			'created' => time()
 		);
 
-		$result = $this->curlPostRequest('https://api.raindrop.io/rest/v1/raindrop', $post_data);
+		$result = $this->postArticleToRaindrop($post_data);
 		$result['response'] = array('title' => $entry->title());
 
 		// This was causing error messages to appear when starring
 		// echo json_encode($result);
 	}
 
-	private function curlPostRequest($url, $post_data)
+  private function postArticleToRaindrop($post_data, $access_token)
+
 	{
 		$headers = array(
 			'Content-Type: application/json; charset=UTF-8',
-			'X-Accept: application/json'
-		);
+      'X-Accept: application/json',
+      'Authorization: Bearer ' . $access_token
+    );
 
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $url);
+		$curl = curl_init('https://api.raindrop.io/rest/v1/raindrop');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);

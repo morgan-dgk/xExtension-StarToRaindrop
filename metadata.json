@@ -1,8 +1,8 @@
 {
-	"name": "StarToPocket",
-	"author": "Pat Hough",
-	"description": "An extension that sends an article to Pocket when you Star (Favorite) it.",
-	"version": 1.0,
-	"entrypoint": "StarToPocket",
-	"type": "user"
+  "name": "StarToRaindropIO",
+  "author": "Morgan Kerle",
+  "description": "An extension that sends an article to RaindropIO when you Star (Favorite) it.",
+  "version": 1.0,
+  "entrypoint": "StarToRaindropIO",
+  "type": "user"
 }
