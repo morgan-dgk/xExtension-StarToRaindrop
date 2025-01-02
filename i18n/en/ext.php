@@ -3,14 +3,16 @@
 return array(
 	'starToRaindropIO' => array(
 		'configure' => array(
-			'client_id' => 'Client Id',
+      'client_id' => 'Client Id',
+      'client_secret' => 'Client Secret',
+      'redirect_uri' => 'Redirect URI',
 			'client_id_description' => '<ul class="listedNumbers">
 				<li>Go to <a href="https://getpocket.com/developer/apps/" target="_blank">Pocket\'s Developer Portal</a></li>
 				<li>Create an Application with at least the \'Add\' permission</li>
 				<li>Enter your Consumer Key and hit "Connect to Pocket"</li>
 			</ul>
-			<span>Details can be found on <a href="https://github.com/huffstler/FreshRSS-StarToPocket" target="_blank">GitHub</a>!',
-			'connect_to_pocket' => 'Connect to Pocket',
+      <span>Details can be found on <a href="https://github.com/huffstler/FreshRSS-StarToPocket" target="_blank">GitHub</a>!',
+			'connect_to_raindrop' => 'Connect to Raindrop',
 			'access_token' => 'Access Token',
 			'keyboard_shortcut' => 'Keyboard shortcut',
 			'extension_disabled' => 'You need to enable the extension before you can connect to Raindrop!',

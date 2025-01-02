@@ -26,7 +26,9 @@
 <form action="<?php echo _url('starToRaindropIO', 'requestAccess'); ?>" method="post">
 	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 	<div class="form-group">
-		<label class="group-name" for="client_id"><?php echo _t('ext.starToRaindropIO.configure.client_id'); ?></label>
+    <label class="group-name" for="client_id"><?php echo _t('ext.starToRaindropIO.configure.client_id'); ?></label>
+		<label class="group-name" for="client_secret"><?php echo _t('ext.starToRaindropIO.configure.client_secret'); ?></label>
+		<label class="group-name" for="redirect_uri"><?php echo _t('ext.starToRaindropIO.configure.redirect_uri'); ?></label>
 		<div class="group-controls">
       <input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>">
       <input type="text" name="client_secret" id="client_secret" value="<?php echo $client_secret; ?>">
