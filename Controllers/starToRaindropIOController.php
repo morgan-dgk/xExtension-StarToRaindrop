@@ -24,7 +24,7 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 		header('Content-Type: application/javascript; charset=utf-8');
 	}
 
-	public function authorizeAction()
+	public function indexAction()
   {
 
     $code = Minz_Request::paramString('code') ?: '';
