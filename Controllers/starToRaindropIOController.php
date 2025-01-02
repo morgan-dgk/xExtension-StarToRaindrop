@@ -58,11 +58,17 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
   public function requestAccessAction()
   {
   
-    $client_id = Minz_Request::paramString('client_id');
-    $redirect_uri = Minz_Request::paramString('redirect_uri');
+    $client_id = Minz_Request::paramString('client_id') ?: '';
+    $client_secret = Minz_Request::paramString('client_secret') ?: '';
+    $redirect_uri = Minz_Request::paramString('redirect_uri') ?: '';
+
+    FreshRSS_Context::user_conf->client_id = $client_id;
+    FreshRSS_Context::user_conf->client_secret = $client_secret;
+    FreshRSS_Context::user_conf->redirect_uri = $redirect_uri;
+
+    FreshRSS_Context::$user_conf->save();
 
     $target = $this->base_url . 'oauth/authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
-
     
     header('Location: ' . $target);
     exit();
