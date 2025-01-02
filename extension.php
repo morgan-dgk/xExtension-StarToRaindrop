@@ -39,7 +39,9 @@ class StarToRaindropExtension extends Minz_Extension {
 		// $this->view->_layout(false);
 
 		$entry_dao = FreshRSS_Factory::createEntryDao();
-		$entry = $entry_dao->searchById($id);
+    $entry = $entry_dao->searchById($id);
+
+    echo json_encode($entry);
 
 		if ($entry === null) {
 			echo json_encode(array('status' => 404));
