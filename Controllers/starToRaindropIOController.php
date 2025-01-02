@@ -1,10 +1,10 @@
 <?php
 
-class FreshExtension_starToPocket_Controller extends Minz_ActionController
+class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
 {
 	public function jsVarsAction()
 	{
-		$extension = Minz_ExtensionManager::findExtension('StarToPocket');
+		$extension = Minz_ExtensionManager::findExtension('StarToRaindropIO');
 
 		$this->view->stp_vars = json_encode(array(
 			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
@@ -28,7 +28,7 @@ class FreshExtension_starToPocket_Controller extends Minz_ActionController
 			'code' => FreshRSS_Context::$user_conf->pocket_request_token
 		);
 
-		$result = $this->curlPostRequest('https://getpocket.com/v3/oauth/authorize', $post_data);
+		$result = $this->curlPostRequest('https://raindrop.io/oauth/authorize', $post_data);
 		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
 
 		if ($result['status'] == 200) {

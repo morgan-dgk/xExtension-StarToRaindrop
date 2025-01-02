@@ -7,7 +7,7 @@ class StarToPocketExtension extends Minz_Extension {
 
 		// New, watching for star activity
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-		$this->registerController('starToPocket');
+		$this->registerController('starToRaindropIO');
 		$this->registerViews();
 	}
 
