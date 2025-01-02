@@ -3,7 +3,7 @@
 class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 {
 
-  private $base_url = 'https://api.raindrop.io/v1/';
+  private $base_url = 'https://raindrop.io/oauth/';
 
 	public function jsVarsAction()
 	{
@@ -35,10 +35,14 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
       'client_id' => FreshRSS_Context::$user_conf->client_id,
       'client_secret' => FreshRSS_Context::$user_conf->client_secret,
       'redirect_uri' => FreshRSS_Context::$user_conf->redirect_uri
-		);
+    );
 
-		$result = $this->curlPostRequest('https://raindrop.io/oauth/access_token', $post_data);
-		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToPocket'));
+    echo $post_data;
+
+		$result = $this->curlPostRequest($this->base_url . 'access_token', $post_data);
+    $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToRaindropIO'));
+
+    echo $result;
 
 		if ($result['status'] == 200) {
 			FreshRSS_Context::$user_conf->access_token = $result['response']->access_token;
@@ -62,13 +66,13 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
     $client_secret = Minz_Request::paramString('client_secret') ?: '';
     $redirect_uri = Minz_Request::paramString('redirect_uri') ?: '';
 
-    // FreshRSS_Context::user_conf->client_id = $client_id;
-    // FreshRSS_Context::user_conf->client_secret = $client_secret;
-    // FreshRSS_Context::user_conf->redirect_uri = $redirect_uri;
+    FreshRSS_Context::$user_conf->client_id = $client_id;
+    FreshRSS_Context::$user_conf->client_secret = $client_secret;
+    FreshRSS_Context::$user_conf->redirect_uri = $redirect_uri;
 
-    // FreshRSS_Context::$user_conf->save();
+    FreshRSS_Context::$user_conf->save();
 
-    $target = $this->base_url . 'oauth/authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
+    $target = $this->base_url . 'authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
     
     header('Location: ' . $target);
     exit();
@@ -106,7 +110,6 @@ class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 	{
 		$headers = array(
 			'Content-Type: application/json; charset=UTF-8',
-			'X-Accept: application/json'
 		);
 
 		$curl = curl_init();
