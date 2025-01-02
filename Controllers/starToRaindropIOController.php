@@ -1,6 +1,6 @@
 <?php
 
-class FreshExtension_startToRaindropIO_Controller extends Minz_ActionController
+class FreshExtension_starToRaindropIO_Controller extends Minz_ActionController
 {
 
   private $base_url = 'https://api.raindrop.io/v1/';
