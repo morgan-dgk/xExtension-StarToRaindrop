@@ -3,6 +3,7 @@
 class StarToRaindropExtension extends Minz_Extension {
 
   public function init() {
+    Minz_Log::debug("Initializing StarToRaindrop Extension!");
 		$this->registerTranslates();
 
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
@@ -25,6 +26,7 @@ class StarToRaindropExtension extends Minz_Extension {
 	 * addAction in the controller.
 	 */
   public function handleStar(array $starredEntries, bool $isStarred): void {
+    Minz_Log::debug("Firing entries_favorite hook for StarToRaindropExtension!");
     $this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
