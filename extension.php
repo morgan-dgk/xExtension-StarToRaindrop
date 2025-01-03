@@ -124,7 +124,7 @@ class StarToRaindropExtension extends Minz_Extension {
 
       Minz_Log::debug('Collection found: ' . json_encode($filtered_collections));
 
-      $collection_obj = $filtered_collections[0];
+      $collection_obj = array_values($filtered_collections)[0];
 
       $collection = array(
         "\$ref" => "collections",
