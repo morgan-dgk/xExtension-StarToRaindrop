@@ -4,7 +4,7 @@
   $client_secret = FreshRSS_Context::$user_conf->client_secret;
   $keyboard_shortcut = FreshRSS_Context::$user_conf->keyboard_shortcut;
   $redirect_uri = FreshRSS_Context::$user_conf->redirect_uri;
-  $collection = FreshRSS_Context::$user_conf->collection;
+  $collection_name = FreshRSS_Context::$user_conf->collection_name;
 ?>
 
 <form action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
@@ -41,7 +41,7 @@
     </div>
     <label class="group-name" for="collection"><?php echo _t('ext.starToRaindrop.configure.collection'); ?></label>
 		<div class="group-controls">
-      <input type="text" name="collection" id="collection" value="<?php echo $collection; ?>">
+      <input type="text" name="collection" id="collection" value="<?php echo $collection_name; ?>">
 		</div>
 
 	</div>
