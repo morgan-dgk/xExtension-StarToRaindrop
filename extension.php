@@ -2,12 +2,11 @@
 
 class StarToRaindropExtension extends Minz_Extension {
 
-	public function init() {
+  public function init() {
 		$this->registerTranslates();
 
-		// New, watching for star activity
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-		$this->registerController('StarToRaindrop');
+		$this->registerController('starToRaindrop');
 		$this->registerViews();
 	}
 
@@ -25,8 +24,9 @@ class StarToRaindropExtension extends Minz_Extension {
 	 * if isStarred, send each starredEntry to 
 	 * addAction in the controller.
 	 */
-	public function handleStar(array $starredEntries, bool $isStarred): void {
-		$this->registerTranslates();
+  public function handleStar(array $starredEntries, bool $isStarred): void {
+    echo "handling star!";
+    $this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
 				$this->addAction($entry);
@@ -51,7 +51,8 @@ class StarToRaindropExtension extends Minz_Extension {
 		$post_data = array(
 			'link' => $entry->link(),
 			'title' => $entry->title(),
-			'created' => time()
+      'created' => date('c', time())
+      // 'collection' => $this->getCollectionId(FreshRSS_Context::$user_conf->collection_name)
 		);
 
 		$result = $this->postArticleToRaindrop($post_data);
@@ -63,6 +64,7 @@ class StarToRaindropExtension extends Minz_Extension {
 
   private function postArticleToRaindrop($post_data)
   {
+    var_dump($post_data);
 
     $access_token = FreshRSS_Context::$user_conf->access_token;
 
@@ -71,6 +73,7 @@ class StarToRaindropExtension extends Minz_Extension {
       'X-Accept: application/json',
       'Authorization: Bearer ' . $access_token
     );
+
 
 		$curl = curl_init('https://api.raindrop.io/rest/v1/raindrop');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -91,7 +94,36 @@ class StarToRaindropExtension extends Minz_Extension {
 			'status' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
 			'errorCode' => isset($response_headers['x-error-code']) ? intval($response_headers['x-error-code']) : 0
 		);
-	}
+  }
+
+  private function getCollectionId($access_token) 
+  {
+    $headers = array(
+			'Content-Type: application/json; charset=UTF-8',
+      'X-Accept: application/json',
+      'Authorization: Bearer ' . $access_token
+    );
+
+    $curl = curl_init('https://api.raindrop.io/rest/v1/collections');
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
+
+    $response = curl_exec($curl);
+
+	  $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		$response_header = substr($response, 0, $header_size);
+		$response_body = substr($response, $header_size);
+    $response_headers = $this->httpHeaderToArray($response_header);
+
+    $data = json_decode($response_body);
+
+    $collection_obj = array_filter($data->items, fn($collection) => strtolower($collection->title) == strtolower(FreshRSS_Context::$user_conf->collection_name));
+
+    return json_encode($collection_obj);
+
+  }
+
 
 	private function httpHeaderToArray($header)
 	{
