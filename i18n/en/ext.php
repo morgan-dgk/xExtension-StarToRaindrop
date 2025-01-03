@@ -9,7 +9,8 @@ return array(
       'collection' => 'Collection',
 			'client_id_description' => '<ul class="listedNumbers">
 				<li>Go to <a href="https://app.raindrop.io/settings/integrations" target="_blank">Raindrop\'s Integration Settings</a></li>
-				<li>Create a new Application and make note of the Client Secret and Client Id Values</li>
+        <li>Create a new Application and make note of the Client Secret and Client Id Values</li>
+        <li>Use the following template for the Callback URI https://my-fresh-rss-domain/i/?c=starToRaindrop.
 				<li>Enter the Client Secret, Client Id and Callback URI values and hit "Connect to Raindrop"</li>
 			</ul>
       <span>Details can be found on <a href="https://github.com/morgan-dgk/xExtension-StarToRaindrop" target="_blank">GitHub</a>!',
