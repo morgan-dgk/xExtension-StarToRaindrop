@@ -1,14 +1,16 @@
 <?php
-	$consumer_key = FreshRSS_Context::$user_conf->pocket_consumer_key;
-	$username = FreshRSS_Context::$user_conf->pocket_username;
-	$access_token = FreshRSS_Context::$user_conf->pocket_access_token;
-	$keyboard_shortcut = FreshRSS_Context::$user_conf->pocket_keyboard_shortcut;
+  $access_token = FreshRSS_Context::$user_conf->access_token;
+  $client_id = FreshRSS_Context::$user_conf->client_id;
+  $client_secret = FreshRSS_Context::$user_conf->client_secret;
+  $keyboard_shortcut = FreshRSS_Context::$user_conf->keyboard_shortcut;
+  $redirect_uri = FreshRSS_Context::$user_conf->redirect_uri;
+  $collection = FreshRSS_Context::$user_conf->collection;
 ?>
 
 <form action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
 	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 	<div class="form-group">
-		<label class="group-name" for="keyboard_shortcut"><?php echo _t('ext.starToPocket.configure.keyboard_shortcut'); ?></label>
+		<label class="group-name" for="keyboard_shortcut"><?php echo _t('ext.starToRaindrop.configure.keyboard_shortcut'); ?></label>
 		<div class="group-controls">
 			<input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?php echo $keyboard_shortcut; ?>">
 		</div>
@@ -21,41 +23,54 @@
 	</div>
 </form>
 
-<?php if ($this->isEnabled() && empty($username) && empty($access_token)): ?>
-<form action="<?php echo _url('starToPocket', 'requestAccess'); ?>" method="post">
+<?php if ($this->isEnabled() && empty($access_token)): ?>
+<form action="<?php echo _url('starToRaindrop', 'requestAccess'); ?>" method="post">
 	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 	<div class="form-group">
-		<label class="group-name" for="consumer_key"><?php echo _t('ext.starToPocket.configure.consumer_key'); ?></label>
+    <label class="group-name" for="client_id"><?php echo _t('ext.starToRaindrop.configure.client_id'); ?></label>
 		<div class="group-controls">
-			<input type="text" name="consumer_key" id="consumer_key" value="<?php echo $consumer_key; ?>">
+      <input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>">
+    </div>
+    <label class="group-name" for="client_secret"><?php echo _t('ext.starToRaindrop.configure.client_secret'); ?></label>
+		<div class="group-controls">
+      <input type="text" name="client_secret" id="client_secret" value="<?php echo $client_secret; ?>">
 		</div>
+    <label class="group-name" for="redirect_uri"><?php echo _t('ext.starToRaindrop.configure.redirect_uri'); ?></label>
+		<div class="group-controls">
+      <input type="text" name="redirect_uri" id="redirect_uri" value="<?php echo $redirect_uri; ?>">
+    </div>
+    <label class="group-name" for="collection"><?php echo _t('ext.starToRaindrop.configure.collection'); ?></label>
+		<div class="group-controls">
+      <input type="text" name="collection" id="collection" value="<?php echo $collection; ?>">
+		</div>
+
 	</div>
 
 	<div class="alert alert-warn">
-		<?php echo _t('ext.starToPocket.configure.consumer_key_description'); ?>
+		<?php echo _t('ext.starToRaindrop.configure.client_id_description'); ?>
 	</div>
 	
 	<div class="form-group form-actions">
 		<div class="group-controls">
-			<button type="submit" class="btn btn-important"><?php echo _t('ext.starToPocket.configure.connect_to_pocket'); ?></button>
+			<button type="submit" class="btn btn-important"><?php echo _t('ext.starToRaindrop.configure.connect_to_raindrop'); ?></button>
 		</div>
 	</div>
 </form>
 <?php elseif (!$this->isEnabled()): ?>
 	<p class="alert alert-error">
-		<?php echo _t('ext.starToPocket.configure.extension_disabled'); ?>
+		<?php echo _t('ext.starToRaindrop.configure.extension_disabled'); ?>
 	</p>
 <?php endif ?>
 
-<?php if (!empty($username) || !empty($access_token)): ?>
+<?php if (!empty($access_token)): ?>
 	<p class="alert alert-success">
-		<?php echo _t('ext.starToPocket.configure.connected_to_pocket', $username, $access_token); ?>
+		<?php echo _t('ext.starToRaindrop.configure.connected_to_raindrop'); ?>
 	</p>
-	<form action="<?php echo _url('starToPocket', 'revokeAccess'); ?>" method="post">
+	<form action="<?php echo _url('starToRaindrop', 'revokeAccess'); ?>" method="post">
 		<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
 		<div class="form-group form-actions">
 			<div class="group-controls">
-				<button type="submit" class="btn btn-important"><?php echo _t('ext.starToPocket.configure.revoke_access'); ?></button>
+				<button type="submit" class="btn btn-important"><?php echo _t('ext.starToRaindrop.configure.revoke_access'); ?></button>
 			</div>
 		</div>
 	</form>

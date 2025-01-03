@@ -1,13 +1,12 @@
 <?php
 
-class StarToPocketExtension extends Minz_Extension {
+class StarToRaindropExtension extends Minz_Extension {
 
-	public function init() {
+  public function init() {
 		$this->registerTranslates();
 
-		// New, watching for star activity
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
-		$this->registerController('starToPocket');
+		$this->registerController('starToRaindrop');
 		$this->registerViews();
 	}
 
@@ -25,8 +24,8 @@ class StarToPocketExtension extends Minz_Extension {
 	 * if isStarred, send each starredEntry to 
 	 * addAction in the controller.
 	 */
-	public function handleStar(array $starredEntries, bool $isStarred): void {
-		$this->registerTranslates();
+  public function handleStar(array $starredEntries, bool $isStarred): void {
+    $this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
 				$this->addAction($entry);
@@ -39,7 +38,11 @@ class StarToPocketExtension extends Minz_Extension {
 		// $this->view->_layout(false);
 
 		$entry_dao = FreshRSS_Factory::createEntryDao();
-		$entry = $entry_dao->searchById($id);
+    $entry = $entry_dao->searchById($id);
+
+    $collection = $this->getCollectionId(FreshRSS_Context::$user_conf->collection_name);
+
+    Minz_Log::debug("Adding article to Collection: " . json_encode($collection));
 
 		if ($entry === null) {
 			echo json_encode(array('status' => 404));
@@ -47,29 +50,28 @@ class StarToPocketExtension extends Minz_Extension {
 		}
 
 		$post_data = array(
-			'consumer_key' => FreshRSS_Context::$user_conf->pocket_consumer_key,
-			'access_token' => FreshRSS_Context::$user_conf->pocket_access_token,
-			'url' => $entry->link(),
+			'link' => $entry->link(),
 			'title' => $entry->title(),
-			'time' => time()
-		);
+      'created' => date('c', time()),
+      'collection' => $collection);
 
-		$result = $this->curlPostRequest('https://getpocket.com/v3/add', $post_data);
-		$result['response'] = array('title' => $entry->title());
+    $result = $this->postArticleToRaindrop($post_data);
 
-		// This was causing error messages to appear when starring
-		// echo json_encode($result);
 	}
 
-	private function curlPostRequest($url, $post_data)
-	{
+  private function postArticleToRaindrop($post_data)
+  {
+
+    $access_token = FreshRSS_Context::$user_conf->access_token;
+
 		$headers = array(
 			'Content-Type: application/json; charset=UTF-8',
-			'X-Accept: application/json'
-		);
+      'X-Accept: application/json',
+      'Authorization: Bearer ' . $access_token
+    );
 
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $url);
+
+		$curl = curl_init('https://api.raindrop.io/rest/v1/raindrop');
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, true);
@@ -88,7 +90,50 @@ class StarToPocketExtension extends Minz_Extension {
 			'status' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
 			'errorCode' => isset($response_headers['x-error-code']) ? intval($response_headers['x-error-code']) : 0
 		);
-	}
+  }
+
+  private function getCollectionId($collection_name)
+  {
+    $headers = array(
+      'Authorization: Bearer ' . FreshRSS_Context::$user_conf->access_token
+    );
+
+    $curl = curl_init('https://api.raindrop.io/rest/v1/collections');
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
+
+    $response = curl_exec($curl);
+    $response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+    if ($response_code == 200) { 
+
+      Minz_Log::debug('Raindrop API response: ' . json_encode($response));
+
+	    $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		  $response_body = substr($response, $header_size);
+
+      $data = json_decode($response_body);
+
+      $filtered_collections = array_filter($data->items, function ($collection) {
+        Minz_Log::debug('Collection: '. json_encode($collection));
+        return strtolower($collection->title) == strtolower(FreshRSS_Context::$user_conf->collection_name);
+      });
+
+      Minz_Log::debug('Collection found: ' . json_encode($filtered_collections));
+
+      $collection_obj = $filtered_collections[0];
+
+      $collection = array(
+        "\$ref" => "collections",
+        "\$id" => $collection_obj->_id
+      );
+
+      return $collection;
+
+    }
+
+  }
 
 	private function httpHeaderToArray($header)
 	{
