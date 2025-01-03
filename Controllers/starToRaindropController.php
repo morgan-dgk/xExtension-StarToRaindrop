@@ -81,7 +81,8 @@ class FreshExtension_starToRaindrop_Controller extends Minz_ActionController
 	public function revokeAccessAction()
   {
 	  FreshRSS_Context::$user_conf->access_token = '';
-		FreshRSS_Context::$user_conf->refresh_token = ''; 
+    FreshRSS_Context::$user_conf->refresh_token = '';
+    FreshRSS_Context::$user_conf->client_secret = '';
 		FreshRSS_Context::$user_conf->save();
 
 		$url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToRaindrop'));

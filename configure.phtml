@@ -64,7 +64,7 @@
 
 <?php if (!empty($access_token)): ?>
 	<p class="alert alert-success">
-		<?php echo _t('ext.starToRaindrop.configure.connected_to_raindrop', $access_token); ?>
+		<?php echo _t('ext.starToRaindrop.configure.connected_to_raindrop'); ?>
 	</p>
 	<form action="<?php echo _url('starToRaindrop', 'revokeAccess'); ?>" method="post">
 		<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />

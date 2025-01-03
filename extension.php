@@ -25,7 +25,6 @@ class StarToRaindropExtension extends Minz_Extension {
 	 * addAction in the controller.
 	 */
   public function handleStar(array $starredEntries, bool $isStarred): void {
-    echo "handling star!";
     $this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
@@ -41,7 +40,9 @@ class StarToRaindropExtension extends Minz_Extension {
 		$entry_dao = FreshRSS_Factory::createEntryDao();
     $entry = $entry_dao->searchById($id);
 
-    echo json_encode($entry);
+    $collection = $this->getCollectionId(FreshRSS_Context::$user_conf->collection_name);
+
+    Minz_Log::debug("Adding article to Collection: " . json_encode($collection));
 
 		if ($entry === null) {
 			echo json_encode(array('status' => 404));
@@ -51,20 +52,15 @@ class StarToRaindropExtension extends Minz_Extension {
 		$post_data = array(
 			'link' => $entry->link(),
 			'title' => $entry->title(),
-      'created' => date('c', time())
-      // 'collection' => $this->getCollectionId(FreshRSS_Context::$user_conf->collection_name)
-		);
+      'created' => date('c', time()),
+      'collection' => $collection);
 
-		$result = $this->postArticleToRaindrop($post_data);
-		$result['response'] = array('title' => $entry->title());
+    $result = $this->postArticleToRaindrop($post_data);
 
-		// This was causing error messages to appear when starring
-		// echo json_encode($result);
 	}
 
   private function postArticleToRaindrop($post_data)
   {
-    var_dump($post_data);
 
     $access_token = FreshRSS_Context::$user_conf->access_token;
 
@@ -96,12 +92,10 @@ class StarToRaindropExtension extends Minz_Extension {
 		);
   }
 
-  private function getCollectionId($access_token) 
+  private function getCollectionId($collection_name)
   {
     $headers = array(
-			'Content-Type: application/json; charset=UTF-8',
-      'X-Accept: application/json',
-      'Authorization: Bearer ' . $access_token
+      'Authorization: Bearer ' . FreshRSS_Context::$user_conf->access_token
     );
 
     $curl = curl_init('https://api.raindrop.io/rest/v1/collections');
@@ -110,20 +104,36 @@ class StarToRaindropExtension extends Minz_Extension {
     curl_setopt($curl, CURLOPT_HEADER, true);
 
     $response = curl_exec($curl);
+    $response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-	  $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-		$response_header = substr($response, 0, $header_size);
-		$response_body = substr($response, $header_size);
-    $response_headers = $this->httpHeaderToArray($response_header);
+    if ($response_code == 200) { 
 
-    $data = json_decode($response_body);
+      Minz_Log::debug('Raindrop API response: ' . json_encode($response));
 
-    $collection_obj = array_filter($data->items, fn($collection) => strtolower($collection->title) == strtolower(FreshRSS_Context::$user_conf->collection_name));
+	    $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		  $response_body = substr($response, $header_size);
 
-    return json_encode($collection_obj);
+      $data = json_decode($response_body);
+
+      $filtered_collections = array_filter($data->items, function ($collection) {
+        Minz_Log::debug('Collection: '. json_encode($collection));
+        return strtolower($collection->title) == strtolower(FreshRSS_Context::$user_conf->collection_name);
+      });
+
+      Minz_Log::debug('Collection found: ' . json_encode($filtered_collections));
+
+      $collection_obj = $filtered_collections[0];
+
+      $collection = array(
+        "\$ref" => "collections",
+        "\$id" => $collection_obj->_id
+      );
+
+      return $collection;
+
+    }
 
   }
-
 
 	private function httpHeaderToArray($header)
 	{
