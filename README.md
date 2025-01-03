@@ -31,7 +31,7 @@ If you'd like to translate the extension to another language please file a pull 
 
 # Thanks
 
-Thanks to [@JWPepper](https://github.com/JWPepper) for the original starToPocket extension from which this repo is forked. 
+Thanks to [@huffstler](https://github.com/huffstler) for the original starToPocket extension from which this repo is forked. 
 
 ## `//TODO:`
 - Add automatic token access token refresh
