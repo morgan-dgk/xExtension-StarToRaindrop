@@ -14,13 +14,13 @@ With this extension you can simply star an article to share it with Raindrop. Ev
 
 ## Download and setup
 
-    1. Clone the repository to your FreshRSS installations extensions folder
-    2. Then, extract and upload it to the `./extensions` folder of your FreshRSS installatio 
-    3. Go to [Raindrop's Integration Settings]("https://app.raindrop.io/settings/integrations") 
-    4. Create a new Application and make note of the Client Secret and Client Id Values
-    5. Use the following template for the Callback URI `{base URL for your FreshRSS instance}/i/?c=starToRaindrop`.
-    6. Enter the Client Secret, Client Id and Callback URI values from Raindrop at the Configuration screen for this extension and hit "Connect to Raindrop"
-    7. Authorize your newly created application
+1. Clone the repository to your FreshRSS installations extensions folder
+2. Then, extract and upload it to the `./extensions` folder of your FreshRSS installatio 
+3. Go to [Raindrop's Integration Settings]("https://app.raindrop.io/settings/integrations") 
+4. Create a new Application and make note of the Client Secret and Client Id Values
+5. Use the following template for the Callback URI `{base URL for your FreshRSS instance}/i/?c=starToRaindrop`.
+6. Enter the Client Secret, Client Id and Callback URI values from Raindrop at the Configuration screen for this extension and hit "Connect to Raindrop"
+7. Authorize your newly created application
 
 ## Raindrop API Error codes
 
