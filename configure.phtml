@@ -1,77 +1,102 @@
 <?php
-  $access_token = FreshRSS_Context::$user_conf->access_token;
-  $client_id = FreshRSS_Context::$user_conf->client_id;
-  $client_secret = FreshRSS_Context::$user_conf->client_secret;
-  $keyboard_shortcut = FreshRSS_Context::$user_conf->keyboard_shortcut;
-  $redirect_uri = FreshRSS_Context::$user_conf->redirect_uri;
-  $collection_name = FreshRSS_Context::$user_conf->collection_name;
+$config = FreshRSS_Context::$user_conf->RaindropIntegration ?? [];
+$access_token = trim($config['access_token'] ?? '');
+$client_id = trim($config['client_id'] ?? '');
+$client_secret = trim($config['client_secret'] ?? '');
+$keyboard_shortcut = trim($config['keyboard_shortcut'] ?? '');
+$redirect_uri = trim($config['redirect_uri'] ?? '');
+$collection = trim($config['collection'] ?? '');
+$tag = trim($config['tag'] ?? '');
 ?>
 
-<form action="<?php echo _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
-	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
-	<div class="form-group">
-		<label class="group-name" for="keyboard_shortcut"><?php echo _t('ext.starToRaindrop.configure.keyboard_shortcut'); ?></label>
-		<div class="group-controls">
-			<input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?php echo $keyboard_shortcut; ?>">
-		</div>
-	</div>
 
-	<div class="form-group form-actions">
-		<div class="group-controls">
-			<button type="submit" class="btn btn-important"><?php echo _t('gen.action.submit'); ?></button>
-		</div>
-	</div>
-</form>
 
-<?php if ($this->isEnabled() && empty($access_token)): ?>
-<form action="<?php echo _url('starToRaindrop', 'requestAccess'); ?>" method="post">
-	<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
-	<div class="form-group">
-    <label class="group-name" for="client_id"><?php echo _t('ext.starToRaindrop.configure.client_id'); ?></label>
-		<div class="group-controls">
-      <input type="text" name="client_id" id="client_id" value="<?php echo $client_id; ?>">
-    </div>
-    <label class="group-name" for="client_secret"><?php echo _t('ext.starToRaindrop.configure.client_secret'); ?></label>
-		<div class="group-controls">
-      <input type="text" name="client_secret" id="client_secret" value="<?php echo $client_secret; ?>">
-		</div>
-    <label class="group-name" for="redirect_uri"><?php echo _t('ext.starToRaindrop.configure.redirect_uri'); ?></label>
-		<div class="group-controls">
-      <input type="text" name="redirect_uri" id="redirect_uri" value="<?php echo $redirect_uri; ?>">
-    </div>
-    <label class="group-name" for="collection"><?php echo _t('ext.starToRaindrop.configure.collection'); ?></label>
-		<div class="group-controls">
-      <input type="text" name="collection" id="collection" value="<?php echo $collection_name; ?>">
-		</div>
-
-	</div>
-
-	<div class="alert alert-warn">
-		<?php echo _t('ext.starToRaindrop.configure.client_id_description'); ?>
-	</div>
-	
-	<div class="form-group form-actions">
-		<div class="group-controls">
-			<button type="submit" class="btn btn-important"><?php echo _t('ext.starToRaindrop.configure.connect_to_raindrop'); ?></button>
-		</div>
-	</div>
-</form>
-<?php elseif (!$this->isEnabled()): ?>
-	<p class="alert alert-error">
-		<?php echo _t('ext.starToRaindrop.configure.extension_disabled'); ?>
-	</p>
+<?php if (!($this->isEnabled())): ?>
+<p class="alert alert-error">
+		<?= _t('ext.starToRaindrop.configure.extension_disabled'); ?>
+</p>
 <?php endif ?>
 
+<?php if ($this->isEnabled() && empty($access_token)): ?>
+  <form action="<?= _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
+<?php elseif ($this->isEnabled() && !empty($access_token)): ?>
+  <form action="<?= _url('extension', 'configure', 'e', urlencode($this->getName())); ?>" method="post">
+<?php endif ?>
+  <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
+
+  <!-- Client Id Input -->
+  <div class="form-group">
+    <label class="group-name" for="client_id"><?= _t('ext.starToRaindrop.configure.client_id'); ?></label>
+    <div class="group-controls">
+      <input type="text" name="client_id" id="client_id" value="<?= htmlspecialchars($client_id); ?>" required>
+    </div>
+  </div>
+
+  <!-- Client Secret Input -->
+  <div class="form-group">
+    <label class="group-name" for="client_secret"><?=_t('ext.starToRaindrop.configure.client_secret'); ?></label>
+    <div class="group-controls">
+      <input type="password" name="client_secret" id="client_secret" value="<?= htmlspecialchars($client_secret); ?>" required>
+    </div>
+  </div>
+
+  <!-- Redirect URI Input -->
+  <div class="form-group">
+    <label class="group-name" for="redirect_uri"><?= _t('ext.starToRaindrop.configure.redirect_uri'); ?></label>
+    <div class="group-controls">
+      <input type="text" name="redirect_uri" id="redirect_uri" value="<?= htmlspecialchars($redirect_uri); ?>" required>
+    </div>
+  </div>
+
+  <!-- Collection Input -->
+  <div class="form-group">
+    <label class="group-name" for="collection"><?= _t('ext.starToRaindrop.configure.collection'); ?></label>
+    <div class="group-controls">
+      <input type="text" name="collection" id="collection" value="<?= htmlspecialchars($collection); ?>">
+      <div class="form-description">
+          <small class="form-text text-muted"><?= _t('ext.starToRaindrop.configure.collection_description'); ?></small>
+      </div>
+    </div>
+  </div>
+
+ <!-- Tag Input -->
+  <div class="form-group">
+    <label class="group-name" for="tag"><?= _t('ext.starToRaindrop.configure.tag'); ?></label>
+    <div class="group-controls">
+      <input type="text" name="tag" id="tag" value="<?= htmlspecialchars($tag); ?>">
+      <div class="form-description">
+          <small class="form-text text-muted"><?= _t('ext.starToRaindrop.configure.tag_description'); ?></small>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Keyboard Shortcut Input -->
+  <div class="form-group">
+    <label class="group-name" for="keyboard_shortcut"><?= _t('ext.starToRaindrop.configure.keyboard_shortcut'); ?></label>
+    <div class="group-controls">
+      <input type="text" name="keyboard_shortcut" id="keyboard_shortcut" maxlength="1" value="<?= $keyboard_shortcut; ?>">
+    </div>
+  </div>
+
+
+  <div class="form-group form-actions">
+    <div class="group-controls">
+      <button type="submit" class="btn btn-important"><?= _t('gen.action.submit'); ?></button>
+    </div>
+  </div>
+</form>
+
 <?php if (!empty($access_token)): ?>
-	<p class="alert alert-success">
-		<?php echo _t('ext.starToRaindrop.configure.connected_to_raindrop'); ?>
-	</p>
-	<form action="<?php echo _url('starToRaindrop', 'revokeAccess'); ?>" method="post">
-		<input type="hidden" name="_csrf" value="<?php echo FreshRSS_Auth::csrfToken(); ?>" />
-		<div class="form-group form-actions">
-			<div class="group-controls">
-				<button type="submit" class="btn btn-important"><?php echo _t('ext.starToRaindrop.configure.revoke_access'); ?></button>
-			</div>
-		</div>
-	</form>
+  <p class="alert alert-success">
+    <?=_t('ext.starToRaindrop.configure.connected_to_raindrop'); ?>
+  </p>
+  <form action="<?=_url('starToRaindrop', 'revokeAccess'); ?>" method="post">
+    <input type="hidden" name="_csrf" value="<?= FreshRSS_Auth::csrfToken(); ?>" />
+    <div class="form-group form-actions">
+      <div class="group-controls">
+        <button type="submit" class="btn btn-important"><?= _t('ext.starToRaindrop.configure.revoke_access'); ?></button>
+      </div>
+    </div>
+  </form>
 <?php endif ?>

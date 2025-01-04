@@ -7,6 +7,9 @@ return array(
       'client_secret' => 'Client Secret',
       'redirect_uri' => 'Redirect URI',
       'collection' => 'Collection',
+      'collection_description' => "optional, collection to add raindrop to",
+      'tag' => 'Tag',
+      'tag_description' => 'optional, tag to add to raindrop',
 			'client_id_description' => '<ul class="listedNumbers">
 				<li>Go to <a href="https://app.raindrop.io/settings/integrations" target="_blank">Raindrop\'s Integration Settings</a></li>
         <li>Create a new Application and make note of the Client Secret and Client Id Values</li>

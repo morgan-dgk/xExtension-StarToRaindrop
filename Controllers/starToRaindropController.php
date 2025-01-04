@@ -5,26 +5,32 @@ class FreshExtension_starToRaindrop_Controller extends Minz_ActionController
 
   private $base_url = 'https://api.raindrop.io/v1/oauth/';
 
-	public function jsVarsAction()
-	{
-		$extension = Minz_ExtensionManager::findExtension('StarToRaindrop');
+  public function jsVarsAction(): void
+  {
 
-		$this->view->stp_vars = json_encode(array(
-			'keyboard_shortcut' => FreshRSS_Context::$user_conf->pocket_keyboard_shortcut,
-			'i18n' => array(
-				'added_article_to_pocket' => _t('ext.starToRaindrop.notifications.added_article_to_raindrop', '%s'),
-				'failed_to_add_article_to_raindrop' => _t('ext.starToRaindrop.notifications.failed_to_add_article_to_raindrop', '%s'),
-				'ajax_request_failed' => _t('ext.starToRaindrop.notifications.ajax_request_failed'),
-				'article_not_found' => _t('ext.starToRaindrop.notifications.article_not_found'),
-			)
-		));
+    $config = FreshRSS_Context::$user_conf->RaindropIntegration ?? [];
 
-		$this->view->_layout(false);
+    $this->view->raindrop_integration_vars = json_encode([
+      'client_id' => $config['client_secret'] ?? '',
+      'client_secret' => $config['client_secret'] ?? '',
+      'collection' => $config['client_secret'] ?? '',
+      'keyboard_shortcut' => $config['keyboard_shortcut'],
+      'redirect_uri' => $config['redirect_uri'],
+      'i18n' => [
+        'added_article_to_pocket' => _t('ext.starToRaindrop.notifications.added_article_to_raindrop', '%s'),
+        'failed_to_add_article_to_raindrop' => _t('ext.starToRaindrop.notifications.failed_to_add_article_to_raindrop', '%s'),
+        'ajax_request_failed' => _t('ext.starToRaindrop.notifications.ajax_request_failed'),
+        'article_not_found' => _t('ext.starToRaindrop.notifications.article_not_found'),
+      ]
+    ]);
 
-		header('Content-Type: application/javascript; charset=utf-8');
-	}
+    $this->view->_layout(false);
+    $this->view->_path('raindropIntegration/vars.js');
 
-	public function indexAction()
+    header('Content-Type: application/javascript; charset=utf-8');
+  }
+
+  public function indexAction()
   {
 
     $code = Minz_Request::paramString('code') ?: '';

@@ -2,8 +2,7 @@
 
 class StarToRaindropExtension extends Minz_Extension {
 
-  public function init() {
-    Minz_Log::debug("Initializing StarToRaindrop Extension!");
+  public function init(): void {
 		$this->registerTranslates();
 
 		$this->registerHook('entries_favorite', [$this, 'handleStar']);
@@ -11,12 +10,29 @@ class StarToRaindropExtension extends Minz_Extension {
 		$this->registerViews();
 	}
 
-	public function handleConfigureAction() {
-		$this->registerTranslates();
+  public function handleConfigureAction(): void {
+
+    parent::init();
+    $this->registerTranslates();
+
 		
-		if (Minz_Request::isPost()) {
-			$keyboard_shortcut = Minz_Request::param('keyboard_shortcut', '');
-			FreshRSS_Context::$user_conf->pocket_keyboard_shortcut = $keyboard_shortcut;
+    if (Minz_Request::isPost()) {
+      $client_id = Minz_Request::paramString('client_id');
+      $client_secret = Minz_Request::paramString('client_secret');
+      $collection = Minz_Request::paramString('collection');
+      $keyboard_shortcut = Minz_Request::paramString("keyboard_shortcut");
+      $tag = Minz_Request::paramString("tag");
+      $redirect_uri = Minz_Request::paramString("redirect_uri");
+
+      FreshRSS_Context::userConf()->_attribute('RaindropIntegration', [
+        'client_id' => $client_id,
+        'client_secret' => $client_secret,
+        'collection' => $collection,
+        'keyboard_shortcut' => $keyboard_shortcut,
+        'tag' => $tag,
+        'redirect_uri' => $redirect_uri
+      ]);
+
 			FreshRSS_Context::$user_conf->save();
 		}
 	}
@@ -27,7 +43,6 @@ class StarToRaindropExtension extends Minz_Extension {
 	 */
   public function handleStar(array $starredEntries, bool $isStarred): void {
     Minz_Log::debug("Firing entries_favorite hook for StarToRaindropExtension!");
-    $this->registerTranslates();
 		foreach ($starredEntries as $entry) {
 			if ($isStarred){
 				$this->addAction($entry);
