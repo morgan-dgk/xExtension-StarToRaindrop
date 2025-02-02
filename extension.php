@@ -2,13 +2,33 @@
 
 class StarToRaindropExtension extends Minz_Extension {
 
+  private static string $base_url = "https://api.raindrop.io/v1/oauth/";
+
+  private string $access_token;
+
+  private string $refresh_token;
+
+  private ?string $collection ;
+
+  private ?string $tag; 
+
+
+  #[\Override]
   public function init(): void {
 		$this->registerTranslates();
 
-		$this->registerHook('entries_favorite', [$this, 'handleStar']);
+    $this->registerHook('entries_favorite', [$this, 'handleStar']);
 		$this->registerController('starToRaindrop');
 		$this->registerViews();
-	}
+  }
+  
+  #[\Override]
+  public function install(): true | string {
+    # Called when the user enables the extension in the configuration page. 
+    # It must return true when successful and a string containing an error message when not
+    return true;
+  }
+
 
   public function handleConfigureAction(): void {
 
@@ -17,6 +37,9 @@ class StarToRaindropExtension extends Minz_Extension {
 
 		
     if (Minz_Request::isPost()) {
+
+      $userConf = FreshRSS::$user_conf->RaindropIntegration ?? [];
+
       $client_id = Minz_Request::paramString('client_id');
       $client_secret = Minz_Request::paramString('client_secret');
       $collection = Minz_Request::paramString('collection');
@@ -24,17 +47,45 @@ class StarToRaindropExtension extends Minz_Extension {
       $tag = Minz_Request::paramString("tag");
       $redirect_uri = Minz_Request::paramString("redirect_uri");
 
-      FreshRSS_Context::userConf()->_attribute('RaindropIntegration', [
+      FreshRSS_Context::userConf()->_attribute('RaindropIntegration', array_merge($userConf, [
         'client_id' => $client_id,
         'client_secret' => $client_secret,
         'collection' => $collection,
         'keyboard_shortcut' => $keyboard_shortcut,
         'tag' => $tag,
         'redirect_uri' => $redirect_uri
-      ]);
+      ]));
 
-			FreshRSS_Context::$user_conf->save();
+      FreshRSS_Context::$user_conf->save();
+
+      if (empty($userConf->access_token)) {
+        
+        $target = self::$base_url . 'authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
+
+        Minz_Request::setGoodNotification("<a href=$target>Authorize</a> FreshRSS to access your Raindrop account");
+
+      }
+
+    }
+
+  
+  }
+
+  public function loadConfigValues(): void {
+
+    if (!class_exists('FreshRSS_Context', false) || !FreshRSS_Context::hasUserConf()) {
+			return;
+    }
+
+    $userConf = FreshRSS_Context::userConf()->RaindropIntegration ?? [];
+
+		if ($userConf["collection"] !== null) {
+			$this->collection= $userConf["collection"];
 		}
+		
+    if ($userConf["tag"] !== null) {
+			$this->tag = $userConf["tag"];
+    }
 	}
 
 	/**

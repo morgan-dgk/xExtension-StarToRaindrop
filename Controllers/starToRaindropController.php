@@ -5,6 +5,12 @@ class FreshExtension_starToRaindrop_Controller extends Minz_ActionController
 
   private $base_url = 'https://api.raindrop.io/v1/oauth/';
 
+  private string $access_token;
+
+  private string $refresh_token;
+
+  private string $token_expires;
+
   public function jsVarsAction(): void
   {
 
@@ -32,25 +38,32 @@ class FreshExtension_starToRaindrop_Controller extends Minz_ActionController
 
   public function indexAction()
   {
+  
+    $userConf = FreshRSS_Context::$user_conf->RaindropIntegration;
 
     $code = Minz_Request::paramString('code') ?: '';
 
     $post_data = array(
       'grant_type' => 'authorization_code',
       'code' => $code,
-      'client_id' => FreshRSS_Context::$user_conf->client_id,
-      'client_secret' => FreshRSS_Context::$user_conf->client_secret,
-      'redirect_uri' => FreshRSS_Context::$user_conf->redirect_uri
+      'client_id' => $userConf['client_id'],
+      'client_secret' => $userConf['client_secret'],
+      'redirect_uri' => $userConf['redirect_uri']
     );
 
     $url = $this->base_url . 'access_token';
 
-		$result = $this->curlPostRequest($url, $post_data);
+    $result = $this->curlPostRequest($url, $post_data);
+
     $url_redirect = array('c' => 'extension', 'a' => 'configure', 'params' => array('e' => 'StarToRaindrop'));
 
-		if ($result['status'] == 200) {
-			FreshRSS_Context::$user_conf->access_token = $result['response']->access_token;
-			FreshRSS_Context::$user_conf->refresh_token = $result['response']->refresh_token;
+    if ($result['status'] == 200) {
+      FreshRSS_Context::userConf()->_attribute('RaindropIntegration', 
+        array_merge(
+          $userConf, 
+          ['access_token' => $result['response']->access_token, "refresh_token" => $result['response']->refresh_token]
+      ));
+
       FreshRSS_Context::$user_conf->save();
 
 			Minz_Request::good(_t('ext.starToRaindrop.notifications.authorized_success'), $url_redirect);
@@ -62,27 +75,6 @@ class FreshExtension_starToRaindrop_Controller extends Minz_ActionController
 			}
 		}
 	}
-
-  public function requestAccessAction()
-  {
-  
-    $client_id = Minz_Request::paramString('client_id') ?: '';
-    $client_secret = Minz_Request::paramString('client_secret') ?: '';
-    $redirect_uri = Minz_Request::paramString('redirect_uri') ?: '';
-    $collection = Minz_Request::paramString('collection') ?: '';
-
-
-    FreshRSS_Context::$user_conf->client_id = $client_id;
-    FreshRSS_Context::$user_conf->client_secret = $client_secret;
-    FreshRSS_Context::$user_conf->redirect_uri = $redirect_uri;
-    FreshRSS_Context::$user_conf->collection_name = $collection;
-    FreshRSS_Context::$user_conf->save();
-
-    $target = $this->base_url . 'authorize?client_id=' . $client_id . '&redirect_uri=' . $redirect_uri;
-    
-    header('Location: ' . $target);
-    exit();
-  }
 
 	public function revokeAccessAction()
   {
